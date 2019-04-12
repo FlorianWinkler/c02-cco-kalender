@@ -1,26 +1,33 @@
+const utils = require('../src/utils');
+
 class User {
-    constructor(name) {
+    constructor(partitionKey, rowKey, name) {
+        this.PartitionKey = partitionKey;
+        this.RowKey = rowKey;
         this.name = name;
         this.calendars = [];
     }
 
-    addCalendar(calendar) {
-        this.calendars.push(calendar);
+    getId() {
+        return this.PartitionKey + ':' + this.RowKey;
     }
 
     /**
-     * Wir haben eine eigene Funktion, die beim Serialisieren als JSON
-     * für die Kalender Referenzen retourniert (nur ID, nicht volle URL).
+     * Wir haben eine eigene Funktion, die beim Serialisieren als JSON Rücksicht auf TableStorage nimmt
      */
     toJSON() {
-        let user = {
-            $loki: this.$loki,
+        return {
+            PartitionKey: this.PartitionKey,
+            RowKey: this.RowKey,
             name: this.name,
-            calendars: []
+            calendars: JSON.stringify(this.calendars)
         };
-        for (let calendar of this.calendars) {
-            user.calendars.push(calendar.$loki);
-        }
+    }
+
+    static fromStorage(entity) {
+        let obj = utils.entityToObject(entity);
+        let user = new User(obj.PartitionKey, obj.RowKey, obj.name);
+        user.calendars = JSON.parse(obj.calendars);
         return user;
     }
 }
