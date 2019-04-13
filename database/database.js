@@ -17,7 +17,7 @@ users.insert(klaus);
 
 let klaraCalendar = new Calendar('Klaras Kalender', klara);
 calendars.insert(klaraCalendar);
-klara.addCalendar(klaraCalendar); // beim Demo-Setup machen wir das manuell (nicht über REST)
+//klara.addCalendar(klaraCalendar); // beim Demo-Setup machen wir das manuell (nicht über REST)
 
 let firstEvent = new Event(
     klaraCalendar,
